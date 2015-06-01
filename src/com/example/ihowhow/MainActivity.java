@@ -3,13 +3,17 @@ package com.example.ihowhow;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+
 import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.PictureCallback;
 import android.hardware.Camera.ShutterCallback;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,25 +30,25 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+       // setContentView(R.layout.activity_main);
         
-        getWindow().setFormat(PixelFormat.TRANSLUCENT);
-        
-        // requestWindowFeature(Window.FEATURE_NO_TITLE);
-        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        
+
         mCamPreview = new CameraPreview(this);
         setContentView(mCamPreview);
+
     }
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.main, menu);
-    	menu.add(0,MENU_TAKE_PICTURE,0,"·Ó¬Û");
-    	menu.add(0,MENU_SHOW_PICTURE,0,"Åã¥Ü·Ó¤ù");
+       // getMenuInflater().inflate(R.menu.main, menu);
+    	
+    	menu.add(0,MENU_TAKE_PICTURE,0,"ç…§ç›¸");
+    	menu.add(0,MENU_SHOW_PICTURE,0,"é¡¯ç¤ºç…§ç‰‡");
         return true;
+    	
+    	
     }
 
     /* (non-Javadoc)
@@ -78,15 +82,26 @@ public class MainActivity extends Activity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        /*int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }*/
+//        int id = item.getItemId();
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+		 //è·å–è‡ªå®šä¹‰çš„ç»˜å›¾è§†å›¾  
+    
+		
 		switch (item.getItemId()) {
 		case MENU_TAKE_PICTURE:
 			mCamera.takePicture(camShutterCallback, camRawDataCallback, camJpegCallback);
-			break;
+			break;	
+		
 
+ 		case MENU_SHOW_PICTURE:
+ 			//setContentView(R.layout.activity_draw);
+ 			Intent intent_draw = new Intent();
+			intent_draw.setClass(MainActivity.this, DrawActivity.class);
+			startActivity(intent_draw); 
+			MainActivity.this.finish();
+ 			break;
 		default:
 			break;
 		}
@@ -95,21 +110,24 @@ public class MainActivity extends Activity {
 	
 	ShutterCallback camShutterCallback = new ShutterCallback() {
 		public void onShutter() {
-			// ³qª¾¨Ï¥ÎªÌ¤w§¹¦¨©ç·Ó,¨Ò¦pµo¥X¤@­ÓÁn­µ
-			Toast.makeText(MainActivity.this, "success¡I", Toast.LENGTH_SHORT)
+
+			// é€šçŸ¥ä½¿ç”¨è€…å·²å®Œæˆæ‹ç…§,ä¾‹å¦‚ç™¼å‡ºä¸€å€‹è²éŸ³
+
+			Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT)
 			.show();
+
 		}
 	};
 
 	PictureCallback camRawDataCallback = new PictureCallback() {
 		public void onPictureTaken(byte[] data, Camera camera) {
-			// ¥Î¨Ó±µ¦¬­ì©lªº¼v¹³¸ê®Æ
+			// ç”¨ä¾†æ¥æ”¶åŸå§‹çš„å½±åƒè³‡æ–™
 		}
 	};
 
 	PictureCallback camJpegCallback = new PictureCallback() {
 		public void onPictureTaken(byte[] data, Camera camera) {
-			// ¥Î¨Ó±µ¦¬À£ÁY¦¨jpeg®æ¦¡ªº¼v¹³¸ê®Æ
+			// ç”¨ä¾†æ¥æ”¶å£“ç¸®æˆjpegæ ¼å¼çš„å½±åƒè³‡æ–™
 
 			FileOutputStream outStream = null;
 			try {
@@ -117,7 +135,7 @@ public class MainActivity extends Activity {
 				outStream.write(data);
 				outStream.close();
 			} catch (IOException e) {
-				Toast.makeText(MainActivity.this, "¼v¹³ÀÉÀx¦s¿ù»~¡I", Toast.LENGTH_SHORT)
+				Toast.makeText(MainActivity.this, "å½±åƒæª”å„²å­˜éŒ¯èª¤ï¼", Toast.LENGTH_SHORT)
 					.show();
 			}
 
