@@ -30,8 +30,8 @@ public class MainActivity extends Activity {
         
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
         
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        // requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
         mCamPreview = new CameraPreview(this);
         setContentView(mCamPreview);
@@ -96,6 +96,8 @@ public class MainActivity extends Activity {
 	ShutterCallback camShutterCallback = new ShutterCallback() {
 		public void onShutter() {
 			// 通知使用者已完成拍照,例如發出一個聲音
+			Toast.makeText(MainActivity.this, "success！", Toast.LENGTH_SHORT)
+			.show();
 		}
 	};
 
@@ -111,7 +113,7 @@ public class MainActivity extends Activity {
 
 			FileOutputStream outStream = null;
 			try {
-				outStream = new FileOutputStream("/sdcard/photo.jpg");
+				outStream = new FileOutputStream("sdcard/photo.jpg");
 				outStream.write(data);
 				outStream.close();
 			} catch (IOException e) {
