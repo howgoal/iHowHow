@@ -28,136 +28,109 @@ import android.view.View;
 import android.widget.ImageView;
 
 public class DrawView extends View {
-	private int view_width = 0;// 屏幕的宽度
-	private int view_height = 0;// 屏幕的高度
-	private float preX;// 起始点的x坐标
-	private float preY;// 起始点的y坐标
-	private Path path;// 路径
+	private int view_width = 0;// 螢幕的寬度
+	private int view_height = 0;// 螢幕的高度
+	private float preX;// 起始點的X座標
+	private float preY;// 起始點的Y座標
+	private Path path;// 路徑
 	public Paint paint;// 畫筆
-	Bitmap cacheBitmap = null;// 定义一个内存中的图片，该图片将作为缓冲区
-	Canvas cacheCanvas = null;// 定义cacheBitmap上的Canvas对象
+	Bitmap cacheBitmap = null;// 定義一個的暫存圖片，把此圖片當作緩衝區
+	Canvas cacheCanvas = null;// 定義cacheBitmap為Canvas對象
 
-	/*
-	 * 功能：构造方法
-	 */
 	public DrawView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		view_width = context.getResources().getDisplayMetrics().widthPixels;// 获取屏幕宽度
-		view_height = context.getResources().getDisplayMetrics().heightPixels;// 获取屏幕高度
-		// 创建一个与该View相同大小的缓存区
+		view_width = context.getResources().getDisplayMetrics().widthPixels;// 讀取螢幕寬度
+		view_height = context.getResources().getDisplayMetrics().heightPixels;// 讀取螢幕高度
+		// 創立一個與該View相同大小的緩衝區
 		cacheBitmap = Bitmap.createBitmap(view_width, view_height,
 				Config.ARGB_8888);
-		cacheCanvas = new Canvas();// 创建一个新的画布
+		cacheCanvas = new Canvas();// 創立一個新的畫布
 
 		path = new Path();
-		// 在cacheCanvas上绘制cacheBitmap
-
-		// cacheBitmap.createBitmap(null, Color.RED, view_width, view_height,
-		// view_height, Config.ARGB_8888);
+		// 在cacheCanvas上繪製cacheBitmap
 
 		cacheCanvas.setBitmap(cacheBitmap);
-		// cacheCanvas.setBitmap(a);
 		paint = new Paint(Paint.DITHER_FLAG);// Paint.DITHER_FLAG防抖动的
 		paint.setColor(Color.RED); // 初始畫筆為紅色
-		// 设置画笔风格
-		paint.setStyle(Paint.Style.STROKE);// 设置填充方式为描边
-		paint.setStrokeJoin(Paint.Join.ROUND);// 设置笔刷转弯处的连接风格
-		paint.setStrokeCap(Paint.Cap.ROUND);// 设置笔刷的图形样式(体现在线的端点上)
-		paint.setStrokeWidth(7);// 设置默认笔触的宽度为1像素
-		paint.setAntiAlias(true);// 设置抗锯齿效果
-		paint.setDither(true);// 使用抖动效果
+		// 設定畫筆風格
+		paint.setStyle(Paint.Style.STROKE);// 設定填充方式為描邊
+		paint.setStrokeJoin(Paint.Join.ROUND);// 設定筆刷轉彎處的連接風格
+		paint.setStrokeCap(Paint.Cap.ROUND);// 設定筆刷的圖形樣式
+		paint.setStrokeWidth(7);// 設定默認筆刷寬度為1像素
+		paint.setAntiAlias(true);// 設定抗鋸齒效果
+		paint.setDither(true);// 使用抖動效果
 		background();
 
 	}
 
-	/*
-	 * 功能：重写onDraw方法
-	 */
+
 	@Override
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 
-		Paint bmpPaint = new Paint();// 采用默认设置创建一个画笔
+		Paint bmpPaint = new Paint();
 		bmpPaint.setTextSize(200);
 		bmpPaint.setColor(Color.WHITE);
-		// canvas.drawPaint(bmpPaint);
-		canvas.drawColor(Color.BLUE);
-		canvas.drawText("HiHi", 200, 200, bmpPaint);
-		// canvas.drawColor(0xFFFFFFFF);//设置背景色
-		canvas.drawBitmap(cacheBitmap, 0, 0, bmpPaint);// 绘制cacheBitmap
-		canvas.drawPath(path, paint);// 绘制路径
-		// canvas.save();
-		canvas.save(Canvas.ALL_SAVE_FLAG);// 保存canvas的状态
-		// 恢复canvas之前保存的状态，防止保存后对canvas执行的操作对后续的绘制有影响
+		canvas.drawBitmap(cacheBitmap, 0, 0, bmpPaint);// 繪製cacheBitmap
+		canvas.drawPath(path, paint);// 繪製路徑
+		canvas.save(Canvas.ALL_SAVE_FLAG);// 儲存canvas的狀態
 		canvas.restore();
 	}
 
 	public void background() {
-		Paint bmpPaint = new Paint();// 采用默认设置创建一个画笔
+		Paint bmpPaint = new Paint();
 		bmpPaint.setTextSize(200);
 		bmpPaint.setColor(Color.WHITE);
-		// canvas.drawPaint(bmpPaint);
 		cacheCanvas.drawColor(Color.BLUE);
-		// cacheCanvas.dr
-		//cacheCanvas.drawText("HiHi", 200, 200, bmpPaint);
 		result();
 	}
 
 	protected void result() {
 		File root = Environment.getExternalStorageDirectory();
 		Bitmap bMap = BitmapFactory.decodeFile(root+"/photo.jpg");
-		//float mDensity = getResources().getDisplayMetrics().density;
-
-		//bMap.setDensity(1000);
 		
 		
-		Paint bmpPaint = new Paint();// 采用默认设置创建一个画笔
-		cacheCanvas.drawBitmap(resize(bMap), 0, view_height/7, bmpPaint);// 绘制cacheBitmap
+		Paint bmpPaint = new Paint();
+		cacheCanvas.drawBitmap(resize(bMap), 0, view_height/7, bmpPaint);// 繪製cacheBitmap
 	}
 
 	 private static Bitmap resize(Bitmap bitmap) {
 		  Matrix matrix = new Matrix(); 
-		  matrix.postScale(0.18f,0.2f); //长和宽放大缩小的比例
+		  matrix.postScale(0.18f,0.2f); 
 		  Bitmap resizeBmp = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);
 		  return resizeBmp;
 		 }
 	
 	public boolean onTouchEvent(MotionEvent event) {
-		// 获取触摸事件发生的位置
 		float x = event.getX();
 		float y = event.getY();
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			// 将绘图的起始点移到(x,y)坐标点的位置
-			path.moveTo(x, y);
 			preX = x;
 			preY = y;
 			break;
 		case MotionEvent.ACTION_MOVE:
-			// 保证横竖绘制距离不能超过625
 			float dx = Math.abs(x - preX);
 			float dy = Math.abs(y - preY);
 			if (dx > 5 || dy > 5) {
-				// .quadTo贝塞尔曲线，实现平滑曲线(对比lineTo)
-				// x1，y1为控制点的坐标值，x2，y2为终点的坐标值
 				path.quadTo(preX, preY, (x + preX) / 2, (y + preY) / 2);
 				preX = x;
 				preY = y;
 			}
 			break;
 		case MotionEvent.ACTION_UP:
-			cacheCanvas.drawPath(path, paint);// 绘制路径
+			cacheCanvas.drawPath(path, paint);// 繪製路徑
 			path.reset();
 			break;
 		}
 		invalidate();
-		return true;// 返回true,表明处理方法已经处理该事件
+		return true;
 	}
 
 	public void clear() {
-		// 设置图形重叠时的处理方式
+		// 設定圖形重疊時的處理方式
 		// paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-		// 设置笔触的宽度
+		//設定畫筆寬度
 		paint.setStrokeWidth(50);
 	}
 
@@ -176,20 +149,19 @@ public class DrawView extends View {
 		// file.setWritable(true);
 		file.createNewFile();
 		FileOutputStream fileOS = new FileOutputStream(file);
-		// 将绘图内容压缩为PNG格式输出到输出流对象中
 		cacheBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOS);
-		fileOS.flush();// 将缓冲区中的数据全部写出到输出流中
-		fileOS.close();// 关闭文件输出流对象
+		fileOS.flush();
+		fileOS.close();
 
 	}
 
 	public String getSDPath() {
 		File sdDir = null;
 		boolean sdCardExist = Environment.getExternalStorageState().equals(
-				android.os.Environment.MEDIA_MOUNTED); // 判断sd卡是否存在
-		if (sdCardExist) // 如果SD卡存在，则获取跟目录
+				android.os.Environment.MEDIA_MOUNTED); // 判斷SD卡是否存在
+		if (sdCardExist) // 如果SD卡存在，則讀取根目錄
 		{
-			sdDir = Environment.getExternalStorageDirectory();// 获取跟目录
+			sdDir = Environment.getExternalStorageDirectory();
 		}
 		return sdDir.toString();
 

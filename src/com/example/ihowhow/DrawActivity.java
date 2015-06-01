@@ -27,36 +27,36 @@ public class DrawActivity extends Activity{
 	 public boolean onOptionsItemSelected(MenuItem item) {
 		 
 		 DrawView dv=(DrawView)findViewById(R.id.drawView1);  
-	     dv.paint.setXfermode(null);//取消擦除效果  
-	     dv.paint.setStrokeWidth(1);//初始化画笔的宽度  
+	     dv.paint.setXfermode(null);//取消擦除效果
+	     dv.paint.setStrokeWidth(7);//初始畫筆寬度
 	     
 	     switch (item.getItemId()) {
 	     case R.id.red:  
-             dv.paint.setColor(Color.RED);//设置笔的颜色为红色  
+             dv.paint.setColor(Color.RED);//設定畫筆顏色
              item.setChecked(true);  
              break;  
          case R.id.green:  
-             dv.paint.setColor(Color.GREEN);//设置笔的颜色为绿色  
+             dv.paint.setColor(Color.GREEN);
              item.setChecked(true);  
              break;  
          case R.id.blue:  
-             dv.paint.setColor(Color.BLUE);//设置笔的颜色为蓝色  
+             dv.paint.setColor(Color.BLUE);  
              item.setChecked(true);  
              break;  
          case R.id.width_1:  
-             dv.paint.setStrokeWidth(5);//设置笔触的宽度为1像素  
+             dv.paint.setStrokeWidth(5);//設定畫筆寬度
              break;  
          case R.id.width_2:  
-             dv.paint.setStrokeWidth(15);//设置笔触的宽度为5像素  
+             dv.paint.setStrokeWidth(15);
              break;  
          case R.id.width_3:  
-             dv.paint.setStrokeWidth(30);//设置笔触的宽度为10像素  
+             dv.paint.setStrokeWidth(30);
              break;  
          case R.id.clear:  
-             dv.clear();//擦除绘画  
+             dv.clear();//清除畫布
              break;  
          case R.id.save:  
-             dv.save();//保存绘画  
+             dv.save();//儲存畫布
              break;  
 	     }
 	     return super.onOptionsItemSelected(item);

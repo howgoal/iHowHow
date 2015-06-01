@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:title="@string/color">  
         <menu>  
-            <!-- 定义一组单选菜单项 -->  
+            <!-- 定義一組群組 -->  
             <group android:checkableBehavior="single">  
-                <!-- 定义子菜单 -->  
+                <!-- 定義子目錄 -->  
                 <item android:id="@+id/red" android:title="@string/color_red"/>     
                 <item android:id="@+id/green" android:title="@string/color_green"/>     
                 <item android:id="@+id/blue" android:title="@string/color_blue"/>   
@@ -13,7 +13,7 @@
     </item>  
     <item android:title="@string/width">  
         <menu>  
-            <!-- 定义子菜单 -->  
+            <!-- 定義子目錄 -->  
             <group>  
                 <item android:id="@+id/width_1" android:title="@string/width_1"/>   
                 <item android:id="@+id/width_2" android:title="@string/width_2"/>   

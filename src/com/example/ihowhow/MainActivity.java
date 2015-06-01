@@ -86,7 +86,6 @@ public class MainActivity extends Activity {
 //        if (id == R.id.action_settings) {
 //            return true;
 //        }
-		 //获取自定义的绘图视图  
     
 		
 		switch (item.getItemId()) {
