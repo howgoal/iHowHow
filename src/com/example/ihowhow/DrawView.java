@@ -8,6 +8,7 @@ import java.io.IOException;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.AvoidXfermode.Mode;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -17,6 +18,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Picture;
+import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.net.Uri;
 import android.os.Environment;
@@ -60,6 +62,7 @@ public class DrawView extends View {
 		paint.setAntiAlias(true);// 設定抗鋸齒效果
 		paint.setDither(true);// 使用抖動效果
 		background();
+		Log.v("!!", "!!");
 
 	}
 
@@ -106,6 +109,7 @@ public class DrawView extends View {
 		float y = event.getY();
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
+			path.moveTo(x, y);
 			preX = x;
 			preY = y;
 			break;
@@ -128,10 +132,11 @@ public class DrawView extends View {
 	}
 
 	public void clear() {
+		//cacheCanvas.drawColor(Color.TRANSPARENT,PorterDuff.Mode.CLEAR);
 		// 設定圖形重疊時的處理方式
 		// paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
 		//設定畫筆寬度
-		paint.setStrokeWidth(50);
+		//paint.setStrokeWidth(50);
 	}
 
 	public void save() {
