@@ -53,7 +53,9 @@ public class DrawActivity extends Activity{
              dv.paint.setStrokeWidth(30);
              break;  
          case R.id.clear:  
-             dv.clear();//清除畫布
+             //dv.clear();//清除畫布
+        	 dv.onClickUndo();
+        	// dv.onClickRedo();
              break;  
          case R.id.save:  
              dv.save();//儲存畫布

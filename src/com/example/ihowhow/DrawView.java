@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -22,6 +23,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.util.LogWriter;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -38,6 +40,9 @@ public class DrawView extends View {
 	public Paint paint;// 畫筆
 	Bitmap cacheBitmap = null;// 定義一個的暫存圖片，把此圖片當作緩衝區
 	Canvas cacheCanvas = null;// 定義cacheBitmap為Canvas對象
+
+	private ArrayList<Path> paths = new ArrayList<Path>();
+	private ArrayList<Path> undonePaths = new ArrayList<Path>();
 
 	public DrawView(Context context, AttributeSet attrs) {
 		super(context, attrs);
@@ -58,14 +63,13 @@ public class DrawView extends View {
 		paint.setStyle(Paint.Style.STROKE);// 設定填充方式為描邊
 		paint.setStrokeJoin(Paint.Join.ROUND);// 設定筆刷轉彎處的連接風格
 		paint.setStrokeCap(Paint.Cap.ROUND);// 設定筆刷的圖形樣式
-		paint.setStrokeWidth(7);// 設定默認筆刷寬度為1像素
-		paint.setAntiAlias(true);// 設定抗鋸齒效果
-		paint.setDither(true);// 使用抖動效果
+		paint.setStrokeWidth(7);// 設定默認筆刷寬度為7像素
+		// paint.setAntiAlias(true);// 設定抗鋸齒效果
+		// paint.setDither(true);// 使用抖動效果
 		background();
 		Log.v("!!", "!!");
 
 	}
-
 
 	@Override
 	protected void onDraw(Canvas canvas) {
@@ -78,6 +82,7 @@ public class DrawView extends View {
 		canvas.drawPath(path, paint);// 繪製路徑
 		canvas.save(Canvas.ALL_SAVE_FLAG);// 儲存canvas的狀態
 		canvas.restore();
+
 	}
 
 	public void background() {
@@ -90,20 +95,20 @@ public class DrawView extends View {
 
 	protected void result() {
 		File root = Environment.getExternalStorageDirectory();
-		Bitmap bMap = BitmapFactory.decodeFile(root+"/photo.jpg");
-		
-		
+		Bitmap bMap = BitmapFactory.decodeFile(root + "/photo.jpg");
+
 		Paint bmpPaint = new Paint();
-		cacheCanvas.drawBitmap(resize(bMap), 0, view_height/7, bmpPaint);// 繪製cacheBitmap
+		cacheCanvas.drawBitmap(resize(bMap), 0, view_height / 7, bmpPaint);// 繪製cacheBitmap
 	}
 
-	 private static Bitmap resize(Bitmap bitmap) {
-		  Matrix matrix = new Matrix(); 
-		  matrix.postScale(0.18f,0.2f); 
-		  Bitmap resizeBmp = Bitmap.createBitmap(bitmap,0,0,bitmap.getWidth(),bitmap.getHeight(),matrix,true);
-		  return resizeBmp;
-		 }
-	
+	private static Bitmap resize(Bitmap bitmap) {
+		Matrix matrix = new Matrix();
+		matrix.postScale(0.18f, 0.2f);
+		Bitmap resizeBmp = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+				bitmap.getHeight(), matrix, true);
+		return resizeBmp;
+	}
+
 	public boolean onTouchEvent(MotionEvent event) {
 		float x = event.getX();
 		float y = event.getY();
@@ -112,6 +117,7 @@ public class DrawView extends View {
 			path.moveTo(x, y);
 			preX = x;
 			preY = y;
+			invalidate();
 			break;
 		case MotionEvent.ACTION_MOVE:
 			float dx = Math.abs(x - preX);
@@ -121,22 +127,51 @@ public class DrawView extends View {
 				preX = x;
 				preY = y;
 			}
+			invalidate();
 			break;
 		case MotionEvent.ACTION_UP:
+			path.lineTo(preX, preY);
+
 			cacheCanvas.drawPath(path, paint);// 繪製路徑
+
+			paths.add(path);
+			Log.i("###", String.valueOf(paths.size()));
+			path = new Path();
+
 			path.reset();
 			break;
 		}
-		invalidate();
+		// invalidate();
 		return true;
 	}
 
+	public void onClickUndo() {
+		if (paths.size() > 0) {
+			
+			paths.remove(paths.size() - 1);
+			background();
+			for (int i = 0; i < paths.size(); i++) 
+			{
+				cacheCanvas.drawPath(paths.get(i), paint);
+				invalidate();
+			}
+			invalidate();
+
+		} else {
+
+		}
+		// toast the user
+	}
+
+	
 	public void clear() {
-		//cacheCanvas.drawColor(Color.TRANSPARENT,PorterDuff.Mode.CLEAR);
+		// cacheCanvas.drawColor(Color.TRANSPARENT,PorterDuff.Mode.CLEAR);
+		invalidate();
+		background();
 		// 設定圖形重疊時的處理方式
 		// paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-		//設定畫筆寬度
-		//paint.setStrokeWidth(50);
+		// 設定畫筆寬度
+		// paint.setStrokeWidth(50);
 	}
 
 	public void save() {
