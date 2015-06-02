@@ -67,11 +67,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 			if(camParas.getFocusMode().equals(Camera.Parameters.FOCUS_MODE_AUTO)||camParas.getFocusMode().equals(Camera.Parameters.FOCUS_MODE_MACRO)){
 				mCamera.autoFocus(onCamAutoFocus);
 			}else{
-				Toast.makeText(getContext(), "照相機不支援自動對焦", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getContext(), "嚙諉相橘蕭嚙踝蕭嚙賭援嚙諛動對蕭J", Toast.LENGTH_SHORT).show();
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
-			Toast.makeText(getContext(), "照相機啟動錯誤", Toast.LENGTH_LONG).show();
+			Toast.makeText(getContext(), "嚙諉相橘蕭嚙課動選蕭嚙羯", Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -93,7 +93,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 		@Override
 		public void onAutoFocus(boolean success, Camera camera) {
 			// TODO Auto-generated method stub
-			Toast.makeText(getContext(), "自動對焦!", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getContext(), "嚙諛動對蕭J!", Toast.LENGTH_SHORT).show();
 		}
 	};
 
