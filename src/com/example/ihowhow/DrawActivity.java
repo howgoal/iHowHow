@@ -82,6 +82,10 @@ public class DrawActivity extends Activity {
 			openOptionsDialog();
 
 			break;
+			
+		case R.id.clear:  
+        	dv.onClickUndo();
+            break;  
 		case R.id.picture:
 			dv.picture_moveable = true;
 			dv.drawPicture();

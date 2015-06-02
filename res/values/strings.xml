@@ -12,7 +12,7 @@
     <string name="width_1">细</string>  
     <string name="width_2">中</string>  
     <string name="width_3">粗</string>  
-    <string name="clear">清除畫面</string>  
+    <string name="clear">復原</string>  
     <string name="save">儲存畫面</string>  
     
 </resources>
