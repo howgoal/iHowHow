@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import android.R.integer;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -20,13 +21,16 @@ import android.graphics.Path;
 import android.graphics.Picture;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnDragListener;
 import android.widget.ImageView;
 
 public class DrawView extends View {
@@ -39,6 +43,17 @@ public class DrawView extends View {
 	Bitmap cacheBitmap = null;// 定義一個的暫存圖片，把此圖片當作緩衝區
 	Canvas cacheCanvas = null;// 定義cacheBitmap為Canvas對象
 
+	boolean picture_moveable = false;
+	int pictureX = 0; 
+	int pictureY = 0;
+	
+	boolean text_moveable = false;
+	int textX = 0;
+	int textY = 50;
+	String textString = "";
+	int mode = 0;
+	
+	
 	public DrawView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		view_width = context.getResources().getDisplayMetrics().widthPixels;// 讀取螢幕寬度
@@ -62,6 +77,7 @@ public class DrawView extends View {
 		paint.setAntiAlias(true);// 設定抗鋸齒效果
 		paint.setDither(true);// 使用抖動效果
 		background();
+		
 		Log.v("!!", "!!");
 
 	}
@@ -74,8 +90,26 @@ public class DrawView extends View {
 		Paint bmpPaint = new Paint();
 		bmpPaint.setTextSize(200);
 		bmpPaint.setColor(Color.WHITE);
+		
+		
+		
 		canvas.drawBitmap(cacheBitmap, 0, 0, bmpPaint);// 繪製cacheBitmap
 		canvas.drawPath(path, paint);// 繪製路徑
+		// Draw Picture
+
+	
+		if(picture_moveable) {
+			Bitmap  bitmap = null ; //Bitmap對象  
+			bitmap = ((BitmapDrawable)getResources().getDrawable(R.drawable.hahah)).getBitmap();  
+			canvas.drawBitmap(bitmap, pictureX, pictureY, null); //繪製圖像  			
+		}
+		
+		if(text_moveable) {
+			Paint tpaint = new Paint();
+			tpaint.setTextSize(50);// 設定字體大小
+			tpaint.setColor(Color.LTGRAY);// 設定字體顏色
+			canvas.drawText(textString, textX, textY, tpaint);
+		}
 		canvas.save(Canvas.ALL_SAVE_FLAG);// 儲存canvas的狀態
 		canvas.restore();
 	}
@@ -105,29 +139,99 @@ public class DrawView extends View {
 		 }
 	
 	public boolean onTouchEvent(MotionEvent event) {
-		float x = event.getX();
-		float y = event.getY();
-		switch (event.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-			path.moveTo(x, y);
-			preX = x;
-			preY = y;
-			break;
-		case MotionEvent.ACTION_MOVE:
-			float dx = Math.abs(x - preX);
-			float dy = Math.abs(y - preY);
-			if (dx > 5 || dy > 5) {
-				path.quadTo(preX, preY, (x + preX) / 2, (y + preY) / 2);
+		if(mode == 0 ) {
+			float x = event.getX();
+			float y = event.getY();
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				path.moveTo(x, y);
 				preX = x;
 				preY = y;
+				break;
+			case MotionEvent.ACTION_MOVE:
+				float dx = Math.abs(x - preX);
+				float dy = Math.abs(y - preY);
+				if (dx > 5 || dy > 5) {
+					path.quadTo(preX, preY, (x + preX) / 2, (y + preY) / 2);
+					preX = x;
+					preY = y;
+				}
+				break;
+			case MotionEvent.ACTION_UP:
+				cacheCanvas.drawPath(path, paint);// 繪製路徑
+				path.reset();
+				break;
 			}
-			break;
-		case MotionEvent.ACTION_UP:
-			cacheCanvas.drawPath(path, paint);// 繪製路徑
-			path.reset();
-			break;
+			invalidate();
 		}
-		invalidate();
+		else if(mode == 1 ) {
+			int x =(int) event.getX();
+			int y =(int) event.getY();
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				
+				pictureX = x;
+				pictureY = y;
+				
+				break;
+			case MotionEvent.ACTION_MOVE:
+				float dx = Math.abs(x - preX);
+				float dy = Math.abs(y - preY);
+				if (dx > 5 || dy > 5) {
+					//path.quadTo(preX, preY, (x + preX) / 2, (y + preY) / 2);
+					pictureX = x;
+					pictureY = y;
+				}
+				
+				break;
+			case MotionEvent.ACTION_UP:
+				
+				mode = 0;
+				Bitmap  bitmap = null ; //Bitmap對象  
+				bitmap = ((BitmapDrawable)getResources().getDrawable(R.drawable.hahah)).getBitmap();  
+				cacheCanvas.drawBitmap(bitmap, pictureX, pictureY, null); //繪製圖像  			
+				picture_moveable = false;
+				pictureX = 0;
+				pictureY = 0;
+				break;
+			}
+			invalidate();
+		}
+		else if(mode == 2 ) {
+			int x =(int) event.getX();
+			int y =(int) event.getY();
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				
+				textX = x;
+				textY = y;
+				
+				break;
+			case MotionEvent.ACTION_MOVE:
+				float dx = Math.abs(x - preX);
+				float dy = Math.abs(y - preY);
+				if (dx > 5 || dy > 5) {
+					//path.quadTo(preX, preY, (x + preX) / 2, (y + preY) / 2);
+					textX = x;
+					textY = y;
+				}
+				
+				break;
+			case MotionEvent.ACTION_UP:
+				Paint tpaint = new Paint();
+				tpaint.setTextSize(50);// 設定字體大小
+				tpaint.setColor(Color.LTGRAY);// 設定字體顏色
+				cacheCanvas.drawText(textString, textX, textY, tpaint);
+				
+				mode = 0;
+				text_moveable = false;
+				textX = 0;
+				textY = 50;
+				break;
+			}
+			invalidate();
+		}
+		
 		return true;
 	}
 
@@ -138,7 +242,17 @@ public class DrawView extends View {
 		//設定畫筆寬度
 		//paint.setStrokeWidth(50);
 	}
-
+	public void drawPicture() {
+		if(picture_moveable) {
+			mode = 1;
+		}
+	}
+	public void drawText(String text) {
+		if(text_moveable) {
+			mode = 2;
+			textString = text;
+		}
+	}
 	public void save() {
 		try {
 			saveBitmap("myPitcture");
@@ -171,4 +285,6 @@ public class DrawView extends View {
 		return sdDir.toString();
 
 	}
+
+
 }
