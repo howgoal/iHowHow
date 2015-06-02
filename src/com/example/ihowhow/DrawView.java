@@ -6,11 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import android.R.integer;
-import android.app.Activity;
-import android.content.ContentResolver;
+import object.DrawLine;
+import object.DrawObject;
+import object.DrawPicture;
+import object.DrawText;
 import android.content.Context;
-import android.graphics.AvoidXfermode.Mode;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -19,21 +19,12 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Picture;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.BitmapDrawable;
-import android.net.Uri;
 import android.os.Environment;
-import android.support.v4.util.LogWriter;
 import android.util.AttributeSet;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnDragListener;
-import android.widget.ImageView;
 
 public class DrawView extends View {
 	private int view_width = 0;// 螢幕的寬度
@@ -48,6 +39,8 @@ public class DrawView extends View {
 	private ArrayList<Path> paths = new ArrayList<Path>();
 	private ArrayList<Path> undonePaths = new ArrayList<Path>();
 
+	private ArrayList<DrawObject> drawObjects = new ArrayList<DrawObject>();
+	private DrawObject drawThings;
 	boolean picture_moveable = false;
 	int pictureX = 0;
 	int pictureY = 0;
@@ -164,7 +157,8 @@ public class DrawView extends View {
 				path.lineTo(preX, preY);
 
 				cacheCanvas.drawPath(path, paint);// 繪製路徑
-
+				drawThings = new DrawLine(path);
+				drawObjects.add(drawThings);
 				paths.add(path);
 				Log.i("###", String.valueOf(paths.size()));
 				path = new Path();
@@ -198,10 +192,11 @@ public class DrawView extends View {
 			case MotionEvent.ACTION_UP:
 
 				mode = 0;
-				Bitmap bitmap = null; // Bitmap對象
-				bitmap = ((BitmapDrawable) getResources().getDrawable(
-						R.drawable.hahah)).getBitmap();
-				cacheCanvas.drawBitmap(bitmap, pictureX, pictureY, null); // 繪製圖像
+				
+				drawThings = new DrawPicture(R.drawable.hahah,getContext());
+				drawThings.movie(x,y);
+				drawThings.draw(cacheCanvas, null);
+				drawObjects.add(drawThings);
 				picture_moveable = false;
 				pictureX = 0;
 				pictureY = 0;
@@ -232,7 +227,10 @@ public class DrawView extends View {
 				Paint tpaint = new Paint();
 				tpaint.setTextSize(50);// 設定字體大小
 				tpaint.setColor(Color.LTGRAY);// 設定字體顏色
-				cacheCanvas.drawText(textString, textX, textY, tpaint);
+				drawThings = new DrawText(textString);
+				drawThings.draw(cacheCanvas, tpaint);
+				drawThings.movie(x,y);
+				drawObjects.add(drawThings);
 
 				mode = 0;
 				text_moveable = false;
@@ -247,12 +245,12 @@ public class DrawView extends View {
 	}
 
 	public void onClickUndo() {
-		if (paths.size() > 0) {
-
+		if (drawObjects.size() > 0) {
+			drawObjects.remove(drawObjects.size()-1);
 			paths.remove(paths.size() - 1);
 			background();
-			for (int i = 0; i < paths.size(); i++) {
-				cacheCanvas.drawPath(paths.get(i), paint);
+			for (int i = 0; i < drawObjects.size(); i++) {
+				drawObjects.get(i).draw(cacheCanvas,paint);
 				invalidate();
 			}
 			invalidate();
