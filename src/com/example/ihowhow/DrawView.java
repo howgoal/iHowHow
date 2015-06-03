@@ -33,6 +33,8 @@ public class DrawView extends View {
 	private float preY;// 起始點的Y座標
 	private Path path;// 路徑
 	public Paint paint;// 畫筆
+
+	
 	Bitmap cacheBitmap = null;// 定義一個的暫存圖片，把此圖片當作緩衝區
 	Canvas cacheCanvas = null;// 定義cacheBitmap為Canvas對象
 
@@ -50,7 +52,9 @@ public class DrawView extends View {
 	int textY = 50;
 	String textString = "";
 	int mode = 0;
-
+	
+	
+	
 	public DrawView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		view_width = context.getResources().getDisplayMetrics().widthPixels;// 讀取螢幕寬度
@@ -59,7 +63,7 @@ public class DrawView extends View {
 		cacheBitmap = Bitmap.createBitmap(view_width, view_height,
 				Config.ARGB_8888);
 		cacheCanvas = new Canvas();// 創立一個新的畫布
-
+		
 		path = new Path();
 		// 在cacheCanvas上繪製cacheBitmap
 
@@ -158,6 +162,7 @@ public class DrawView extends View {
 
 				cacheCanvas.drawPath(path, paint);// 繪製路徑
 				drawThings = new DrawLine(path);
+				drawThings.setPaint(paint);
 				drawObjects.add(drawThings);
 				paths.add(path);
 				Log.i("###", String.valueOf(paths.size()));
@@ -192,11 +197,9 @@ public class DrawView extends View {
 			case MotionEvent.ACTION_UP:
 
 				mode = 0;
-				
-				drawThings = new DrawPicture(R.drawable.hahah,getContext());
 				drawThings.movie(x,y);
-				drawThings.draw(cacheCanvas, null);
-				drawObjects.add(drawThings);
+				drawThings.setPaint(paint);
+				drawThings.draw(cacheCanvas);
 				picture_moveable = false;
 				pictureX = 0;
 				pictureY = 0;
@@ -227,11 +230,9 @@ public class DrawView extends View {
 				Paint tpaint = new Paint();
 				tpaint.setTextSize(50);// 設定字體大小
 				tpaint.setColor(Color.LTGRAY);// 設定字體顏色
-				drawThings = new DrawText(textString);
-				drawThings.draw(cacheCanvas, tpaint);
+				drawThings.setPaint(tpaint);
 				drawThings.movie(x,y);
-				drawObjects.add(drawThings);
-
+				drawThings.draw(cacheCanvas);
 				mode = 0;
 				text_moveable = false;
 				textX = 0;
@@ -247,10 +248,9 @@ public class DrawView extends View {
 	public void onClickUndo() {
 		if (drawObjects.size() > 0) {
 			drawObjects.remove(drawObjects.size()-1);
-			paths.remove(paths.size() - 1);
 			background();
 			for (int i = 0; i < drawObjects.size(); i++) {
-				drawObjects.get(i).draw(cacheCanvas,paint);
+				drawObjects.get(i).draw(cacheCanvas);
 				invalidate();
 			}
 			invalidate();
@@ -274,6 +274,10 @@ public class DrawView extends View {
 	public void drawPicture() {
 		if (picture_moveable) {
 			mode = 1;
+			drawThings = new DrawPicture(R.drawable.hahah,getContext());
+			drawThings.movie(pictureX, pictureY);
+			drawObjects.add(drawThings);
+			
 		}
 	}
 
@@ -281,6 +285,10 @@ public class DrawView extends View {
 		if (text_moveable) {
 			mode = 2;
 			textString = text;
+			drawThings = new DrawText(text);
+			drawThings.movie(textX, textY);
+			drawThings.setPaint(paint);
+			drawObjects.add(drawThings);
 		}
 	}
 
