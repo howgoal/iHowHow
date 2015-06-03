@@ -19,7 +19,7 @@ public class DrawPicture extends DrawObject {
 	}
 
 	@Override
-	public void draw(Canvas canvas, Paint _paint) {
+	public void draw(Canvas canvas) {
 		// TODO Auto-generated method stub
 		canvas.drawBitmap(bitmap, x, y, null); // 繪製圖像
 	}
@@ -29,6 +29,13 @@ public class DrawPicture extends DrawObject {
 		// TODO Auto-generated method stub
 		x = _x;
 		y = _y;
+	}
+
+
+	@Override
+	public void setPaint(Paint _paint) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
